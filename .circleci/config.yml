@@ -1,21 +1,19 @@
 version: 2.1
 
 jobs:
-  build_deploy:
+  deploy:
     machine:
-      image: ubuntu-2004:202010-01
+      image: nginx:stable
     steps:
       - checkout
       - run:
-          name: Installing AWS CLI
+          name: Copy path
           command: |
-            sudo apt-get update
-            sudo apt install python3-pip
-            sudo pip3 install awsebcli --upgrade
-      - run: aws s3 sync ./ s3://ci-cd-example
-
+            ls -la
+            pwd
+            
 workflows:
   version: 2
   execute_bulk:
     jobs:
-      - build_deploy
+      - deploy
