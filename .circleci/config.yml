@@ -1,19 +1,27 @@
 version: 2.1
 
+orbs:
+  aws-s3: circleci/aws-s3@2.0.0
+
 jobs:
   deploy:
     docker:
       - image: circleci/node:10
     steps:
       - checkout
-      - run:
-          name: Installing AWS CLI
-          command: |
-            sudo apt-get update
-            sudo apt install python3-pip
-            sudo pip3 install awscli --upgrade
-      - run: cd ./app
-      - run: aws s3 sync ./app/ s3://circleci-poc-mgz
+      - aws-s3/sync:
+          arguments: |
+            --acl public-read \
+            --cache-control "max-age=86400"
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-region: AWS_REGION
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          from: app
+          to: 's3://circleci-poc-mgz'
+      - aws-s3/copy:
+          arguments: '--dryrun'
+          from: app/*
+          to: 's3://circleci-poc-mgz'
             
 workflows:
   version: 2
