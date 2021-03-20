@@ -1,16 +1,22 @@
 version: 2.1
 
+orbs:
+  aws-ecs: circleci/aws-ecs@2.1.0
+
 jobs:
   deploy:
     machine:
-      image: nginx:stable
+      image: circleci/node:10
     steps:
       - checkout
       - run:
-          name: Copy path
+          name: Installing AWS CLI
           command: |
-            ls -la
-            pwd
+            sudo apt-get update
+            sudo apt install python3-pip
+            sudo pip3 install awscli --upgrade
+      - run: cd ./app
+      - run: aws s3 sync ./app/* s3://circleci-poc-mgz
             
 workflows:
   version: 2
