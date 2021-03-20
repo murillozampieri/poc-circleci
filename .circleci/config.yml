@@ -1,12 +1,9 @@
 version: 2.1
 
-orbs:
-  aws-ecs: circleci/aws-ecs@2.1.0
-
 jobs:
   deploy:
-    machine:
-      image: circleci/node:10
+    docker:
+      - image: circleci/node:10
     steps:
       - checkout
       - run:
@@ -16,7 +13,7 @@ jobs:
             sudo apt install python3-pip
             sudo pip3 install awscli --upgrade
       - run: cd ./app
-      - run: aws s3 sync ./app/* s3://circleci-poc-mgz
+      - run: aws s3 sync ./app/ s3://circleci-poc-mgz
             
 workflows:
   version: 2
